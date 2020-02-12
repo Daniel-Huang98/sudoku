@@ -5,6 +5,7 @@ import NumberInput from "./NumberInput";
 interface IBoard {
   EnterBoard(event: any): void;
   play: boolean;
+  board: Array<Array<number>>;
 }
 
 const Board: React.FC<IBoard> = props => {
@@ -18,6 +19,7 @@ const Board: React.FC<IBoard> = props => {
           y={y}
           EnterBoard={props.EnterBoard}
           play={props.play}
+          input={props.board[y - 1][x - 1]}
         />
       );
     }

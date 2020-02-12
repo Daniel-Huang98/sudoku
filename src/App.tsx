@@ -1,28 +1,26 @@
-import React, { useEffect, FormEvent } from "react";
+import React, { useEffect } from "react";
 import Board from "./components/Board";
 import "./css/App.css";
 import { clearBoard } from "./Constants";
+import { validInput, guess, IGuess, mergeBoard } from "./helpers";
 
 const App = () => {
   const [counter, setCounter] = React.useState(0);
   const [play, setPlay] = React.useState(false);
   const [input, setInput] = React.useState(clearBoard);
   const [invalid, setInvalid] = React.useState(false);
-
-  console.log(input);
+  const [lastStep, setLastStep] = React.useState<Array<IGuess>>([]);
+  const [done, setDone] = React.useState(false);
 
   useEffect(() => {
     setTimeout(() => {
       if (play) {
-        setCounter(counter + 1);
+        setLastStep(guess([...lastStep], [...input]));
       }
-    }, 1000);
+    }, 1);
   });
 
   const EnterBoard = (event: any) => {
-    console.log(event.target.id);
-    console.log(event.target.value);
-    console.log("entered");
     const pos = event.target.id.split(" ");
     var inputCopy = [...input];
     inputCopy[Number(pos[1]) - 1][Number(pos[0]) - 1] = Number(
@@ -38,9 +36,24 @@ const App = () => {
         <h2>{play ? "Solving" : "Paused"}</h2>
       </header>
       <div className="body">
+        <p>{invalid ? "invalid" : "ok"}</p>
         <p>steps: {counter}</p>
-        <Board EnterBoard={EnterBoard} play={play} />
-        <div id="start" onClick={() => setPlay(true)}>
+        <Board
+          EnterBoard={EnterBoard}
+          play={play}
+          board={mergeBoard(lastStep, input)}
+        />
+        <div
+          id="start"
+          onClick={() => {
+            if (!validInput(input)) {
+              setInvalid(true);
+              return;
+            }
+            setInvalid(false);
+            setPlay(true);
+          }}
+        >
           Start
         </div>
         <div id="start" onClick={() => setPlay(false)}>
