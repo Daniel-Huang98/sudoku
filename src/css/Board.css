@@ -1,0 +1,7 @@
+.Board {
+  display: grid;
+  grid-template-columns: 50px 50px 50px 50px 50px 50px 50px 50px 50px;
+  grid-template-rows: 50px 50px 50px 50px 50px 50px 50px 50px 50px;
+  height: 700px;
+  width: 700px;
+}

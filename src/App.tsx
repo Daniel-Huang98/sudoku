@@ -1,26 +1,57 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, FormEvent } from "react";
+import Board from "./components/Board";
+import "./css/App.css";
+import { clearBoard } from "./Constants";
 
 const App = () => {
+  const [counter, setCounter] = React.useState(0);
+  const [play, setPlay] = React.useState(false);
+  const [input, setInput] = React.useState(clearBoard);
+  const [invalid, setInvalid] = React.useState(false);
+
+  console.log(input);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (play) {
+        setCounter(counter + 1);
+      }
+    }, 1000);
+  });
+
+  const EnterBoard = (event: any) => {
+    console.log(event.target.id);
+    console.log(event.target.value);
+    console.log("entered");
+    const pos = event.target.id.split(" ");
+    var inputCopy = [...input];
+    inputCopy[Number(pos[1]) - 1][Number(pos[0]) - 1] = Number(
+      event.target.value
+    );
+    setInput(inputCopy);
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+      <header>
+        <h1>Sudoku Solver </h1>
+        <h2>{play ? "Solving" : "Paused"}</h2>
       </header>
+      <div className="body">
+        <p>steps: {counter}</p>
+        <Board EnterBoard={EnterBoard} play={play} />
+        <div id="start" onClick={() => setPlay(true)}>
+          Start
+        </div>
+        <div id="start" onClick={() => setPlay(false)}>
+          Pause
+        </div>
+      </div>
+      <footer>
+        <h2>Made by Daniel Huang</h2>
+      </footer>
     </div>
   );
-}
+};
 
 export default App;
