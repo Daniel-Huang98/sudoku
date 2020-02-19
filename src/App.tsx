@@ -14,8 +14,12 @@ const App = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      if (play) {
-        setLastStep(guess([...lastStep], [...input]));
+      if (play && !done) {
+        setLastStep(
+          guess([...lastStep], [...input], () => {
+            setDone(true);
+          })
+        );
       }
     }, 1);
   });
@@ -34,6 +38,7 @@ const App = () => {
       <header>
         <h1>Sudoku Solver </h1>
         <h2>{play ? "Solving" : "Paused"}</h2>
+        <h2>{done ? "done" : ""}</h2>
       </header>
       <div className="body">
         <p>{invalid ? "invalid" : "ok"}</p>
@@ -52,6 +57,7 @@ const App = () => {
             }
             setInvalid(false);
             setPlay(true);
+            setDone(false);
           }}
         >
           Start

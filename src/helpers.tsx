@@ -93,13 +93,16 @@ const noZeros = (board: Array<Array<number>>) => {
 export const guess = (
   input: Array<IGuess>,
   board: Array<Array<number>>,
-  setDone: () => void
+  done: any
 ) => {
   var guess = [...input];
   var currBoard = mergeBoard(guess, board);
-  //get last guess
 
   const last = guess[guess.length - 1];
+
+  if (noZeros(board) && validInput(board)) {
+    done();
+  }
 
   if (validInput(currBoard) || guess.length === 0) {
     for (var y = last ? last.y : 0; y < 9; y++) {
@@ -124,6 +127,17 @@ export const guess = (
     }
   }
   return guess;
+};
+
+export const guess2 = (input: Array<IGuess>, board: Array<Array<number>>) => {
+  var guess = [...input];
+
+  const last = guess[guess.length - 1];
+
+  for (var y = last ? last.y : 0; y < 9; y++) {
+    for (var x = y === last?.y ? last.x + 1 : 0; x < 9; x++) {}
+  }
+  //get last guess
 };
 
 export const mergeBoard = (
