@@ -79,7 +79,7 @@ export interface IGuess {
   value: number;
 }
 
-const noZeros = (board: Array<Array<number>>) => {
+export const noZeros = (board: Array<Array<number>>) => {
   for (var x = 0; x < 9; x++) {
     for (var y = 0; y < 9; y++) {
       if (board[y][x] === 0) {
@@ -90,43 +90,61 @@ const noZeros = (board: Array<Array<number>>) => {
   return true;
 };
 
-export const guess = (
-  input: Array<IGuess>,
-  board: Array<Array<number>>,
-  done: any
-) => {
-  var guess = [...input];
-  var currBoard = mergeBoard(guess, board);
+export interface IState {
+  board: Array<Array<number>>;
+  guess: Array<IGuess>;
+  popped: boolean;
+}
+
+export const guess = (input: IState, update: (input: IState) => void) => {
+  var guess = [...input.guess];
+  var board = input.board;
+  var popped = input.popped;
 
   const last = guess[guess.length - 1];
+  //console.log(last);
+  //console.log(board);
 
-  if (noZeros(board) && validInput(board)) {
-    done();
-  }
-
-  if (validInput(currBoard) || guess.length === 0) {
+  if ((validInput(board) || guess.length === 0) && !popped) {
     for (var y = last ? last.y : 0; y < 9; y++) {
       for (var x = y === last?.y ? last.x + 1 : 0; x < 9; x++) {
-        if (currBoard[y][x] === 0) {
+        if (board[y][x] === 0) {
           guess.push({ x, y, value: 1 });
-
-          return guess;
+          board[y][x] = 1;
+          update({
+            board,
+            guess,
+            popped: false
+          });
+          return;
         }
       }
     }
   } else {
-    guess[guess.length - 1].value++;
-    if (guess[guess.length - 1].value > 9) {
-      guess.pop();
-      if (guess.length !== 0) {
-        guess[guess.length - 1].value++;
-        while (guess[guess.length - 1].value++ >= 9) {
-          guess.pop();
-        }
+    if (++guess[guess.length - 1].value <= 9) {
+      const val = guess[guess.length - 1];
+      board[val.y][val.x] = val.value;
+    } else {
+      //console.log(guess);
+      const val = guess.pop();
+      if (val) {
+        board[val.y][val.x] = 0;
+        //console.log(guess);
+        update({
+          board,
+          guess,
+          popped: true
+        });
+        return;
       }
     }
   }
-  return guess;
+  update({
+    board,
+    guess,
+    popped: false
+  });
+  return;
 };
 
 export const guess2 = (input: Array<IGuess>, board: Array<Array<number>>) => {
