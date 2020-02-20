@@ -26,7 +26,29 @@ const Board: React.FC<IBoard> = props => {
     board.push(row);
   }
 
-  return <div className="Board">{board}</div>;
+  var grid = [];
+  for (var y1 = 0; y1 < 3; y1++) {
+    for (var x1 = 0; x1 < 3; x1++) {
+      grid.push(
+        <div
+          className="grid"
+          style={{
+            gridColumnStart: 1 + 3 * x1,
+            gridColumnEnd: 1 + 3 * x1 + 3,
+            gridRowStart: 1 + 3 * y1,
+            gridRowEnd: 1 + 3 * y1 + 3
+          }}
+        ></div>
+      );
+    }
+  }
+
+  return (
+    <div className="Board">
+      {board}
+      {grid}
+    </div>
+  );
 };
 
 export default Board;

@@ -2,29 +2,51 @@ import React, { useEffect } from "react";
 import Board from "./components/Board";
 import "./css/App.css";
 import { clearBoard } from "./Constants";
-import { validInput, guess, IGuess, IState, noZeros } from "./helpers";
+
+import {
+  validInput,
+  guess,
+  IGuess,
+  IState,
+  noZeros,
+  newBoard
+} from "./helpers";
+import Dashboard from "./components/Dashboard";
 
 const App = () => {
   const [play, setPlay] = React.useState(false);
   const [input, setInput] = React.useState({
-    board: clearBoard,
+    board: newBoard(clearBoard),
     guess: new Array<IGuess>(),
     popped: false
   });
   const [invalid, setInvalid] = React.useState(false);
   const [done, setDone] = React.useState(false);
 
-  //console.log(input.board);
-
   const update = (input: IState) => {
     if (noZeros(input.board) && validInput(input.board)) {
       setDone(true);
       setPlay(false);
-      //console.log("done");
     }
 
     setInput(input);
   };
+
+  const reset = () => {
+    window.location.reload();
+  };
+
+  const start = () => {
+    if (!validInput(input.board)) {
+      setInvalid(true);
+      return;
+    }
+    setInvalid(false);
+    setPlay(true);
+    setDone(false);
+  };
+
+  const stop = () => setPlay(false);
 
   useEffect(() => {
     setTimeout(() => {
@@ -46,42 +68,20 @@ const App = () => {
   return (
     <div className="App">
       <header>
-        <h1>Sudoku Solver </h1>
-        <h2>{done ? "done" : play ? "Solving" : "Paused"}</h2>
+        <h1>Sudoku Solver Visualiser</h1>
+        <h2>
+          {invalid
+            ? "Invalid Input"
+            : done
+            ? "Done"
+            : play
+            ? "Solving"
+            : "Stopped"}
+        </h2>
       </header>
       <div className="body">
-        <p>{invalid ? "invalid" : "ok"}</p>
         <Board EnterBoard={EnterBoard} play={play} board={input.board} />
-        <div
-          id="start"
-          onClick={() => {
-            if (!validInput(input.board)) {
-              setInvalid(true);
-              return;
-            }
-            setInvalid(false);
-            setPlay(true);
-            setDone(false);
-          }}
-        >
-          Start
-        </div>
-        <div id="start" onClick={() => setPlay(false)}>
-          Pause
-        </div>
-        <div
-          id="start"
-          onClick={() => {
-            setPlay(false);
-            setInput({
-              board: clearBoard,
-              guess: new Array<IGuess>(),
-              popped: false
-            });
-          }}
-        >
-          Reset
-        </div>
+        <Dashboard start={start} stop={stop} reset={reset} />
       </div>
       <footer>
         <h2>Made by Daniel Huang</h2>

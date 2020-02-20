@@ -1,0 +1,7 @@
+#Dashboard {
+  min-width: 100px;
+  max-width: 1000px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}

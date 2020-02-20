@@ -102,8 +102,6 @@ export const guess = (input: IState, update: (input: IState) => void) => {
   var popped = input.popped;
 
   const last = guess[guess.length - 1];
-  //console.log(last);
-  //console.log(board);
 
   if ((validInput(board) || guess.length === 0) && !popped) {
     for (var y = last ? last.y : 0; y < 9; y++) {
@@ -125,11 +123,10 @@ export const guess = (input: IState, update: (input: IState) => void) => {
       const val = guess[guess.length - 1];
       board[val.y][val.x] = val.value;
     } else {
-      //console.log(guess);
       const val = guess.pop();
+
       if (val) {
         board[val.y][val.x] = 0;
-        //console.log(guess);
         update({
           board,
           guess,
@@ -145,17 +142,6 @@ export const guess = (input: IState, update: (input: IState) => void) => {
     popped: false
   });
   return;
-};
-
-export const guess2 = (input: Array<IGuess>, board: Array<Array<number>>) => {
-  var guess = [...input];
-
-  const last = guess[guess.length - 1];
-
-  for (var y = last ? last.y : 0; y < 9; y++) {
-    for (var x = y === last?.y ? last.x + 1 : 0; x < 9; x++) {}
-  }
-  //get last guess
 };
 
 export const mergeBoard = (
@@ -178,4 +164,23 @@ export const mergeBoard = (
   }
 
   return newBoard;
+};
+
+export const newBoard = (board: number[][]): number[][] => {
+  var newBoard = [];
+
+  for (var i = 0; i < board.length; i++) {
+    newBoard.push([...board[i]]);
+  }
+  return [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0]
+  ];
 };

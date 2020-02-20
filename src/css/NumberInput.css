@@ -4,6 +4,9 @@
   font-size: large;
   text-align: center;
   outline: none;
+  border-style: solid;
+  border-width: 1px;
+  border-color: lightgray;
 }
 
 /* Chrome, Safari, Edge, Opera */
@@ -16,4 +19,17 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type="number"] {
   -moz-appearance: textfield;
+}
+
+@media only screen and (max-device-width: 640px) {
+  .NumberInput {
+    height: 1rem;
+    width: 1rem;
+    font-size: large;
+    text-align: center;
+    outline: none;
+    border-style: solid;
+    border-width: 1px;
+    border-color: blanchedalmond;
+  }
 }
