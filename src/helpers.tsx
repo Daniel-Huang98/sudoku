@@ -96,7 +96,7 @@ export interface IState {
   popped: boolean;
 }
 
-export const guessNaive = (input: IState, update: (input: IState) => void) => {
+export const guess = (input: IState, update: (input: IState) => void) => {
   var guess = [...input.guess];
   var board = input.board;
   var popped = input.popped;
@@ -144,28 +144,77 @@ export const guessNaive = (input: IState, update: (input: IState) => void) => {
   return;
 };
 
+export const guessNaive = (
+  board: number[][],
+  update: (board: number[][], done: boolean, count: number) => void,
+  count: Icount
+) => {
+  /*var guess = [...input.guess];
+  var board = input.board;
+  var popped = input.popped;
+
+  const last = guess[guess.length - 1];
+
+  if ((validInput(board) || guess.length === 0) && !popped) {
+    for (var y = last ? last.y : 0; y < 9; y++) {
+      for (var x = y === last?.y ? last.x + 1 : 0; x < 9; x++) {
+        if (board[y][x] === 0) {
+          guess.push({ x, y, value: 1 });
+          board[y][x] = 1;
+          return;
+        }
+      }
+    }
+  } else {
+    if (++guess[guess.length - 1].value <= 9) {
+      const val = guess[guess.length - 1];
+      board[val.y][val.x] = val.value;
+    } else {
+      const val = guess.pop();
+
+      if (val) {
+        board[val.y][val.x] = 0;
+
+        return;
+      }
+    }
+  }
+  return;*/
+};
+
+export interface Icount {
+  count: number;
+  state: number[][][];
+}
+
 export const guessPrune = (
   board: number[][],
-  update: (board: number[][], done: boolean) => void
+  update: (board: number[][], done: boolean, count: Icount) => void,
+  count: Icount
 ): boolean => {
   const tempBoard = newBoard(board);
+
   //for each board calculate the array of options for each hole
   //choose the option with the least options
   const guess = calcOptions(tempBoard);
+
   if (guess === null) {
-    console.log(tempBoard);
-    update(tempBoard, true);
+    update(tempBoard, true, count);
     return true;
   }
+
   for (var x = 0; x < guess.options.length; x++) {
     tempBoard[guess.y][guess.x] = guess.options[x];
+    count.state.push(newBoard(tempBoard));
+    count.count++;
     if (validInput(tempBoard)) {
-      if (guessPrune(tempBoard, update)) {
+      if (guessPrune(tempBoard, update, count)) {
         return true;
       }
     }
   }
-  return false;
+
+  return false; // no solutions
 };
 
 interface coord {
@@ -180,7 +229,8 @@ const calcOptions = (board: number[][]): coord | null => {
   for (var y = 0; y < 9; y++) {
     for (var x = 0; x < 9; x++) {
       if (board[y][x] === 0) {
-        const curr = getOptions(board, x, y);
+        var curr = getOptions(board, x, y);
+        curr = curr.reverse();
         holes.push({
           x,
           y,
@@ -189,7 +239,7 @@ const calcOptions = (board: number[][]): coord | null => {
         if (leastOption) {
           const len: number = leastOption.options.length;
           leastOption =
-            len < curr.length
+            len <= curr.length
               ? leastOption
               : {
                   x,
@@ -206,7 +256,7 @@ const calcOptions = (board: number[][]): coord | null => {
       }
     }
   }
-  //return holes;
+
   return leastOption;
 };
 
@@ -225,6 +275,24 @@ const getOptions = (board: number[][], x: number, y: number): number[] => {
       return ele !== value;
     });
   }
+
+  for (
+    var col1: number = Math.floor(x / 3) * 3;
+    col1 < Math.floor(x / 3) * 3 + 3;
+    col1++
+  ) {
+    for (
+      var row1: number = Math.floor(y / 3) * 3;
+      row1 < Math.floor(y / 3) * 3 + 3;
+      row1++
+    ) {
+      const value = board[row1][col1];
+      options = options.filter(ele => {
+        return ele !== value;
+      });
+    }
+  }
+
   return options;
 };
 

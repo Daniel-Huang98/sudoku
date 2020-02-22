@@ -3,15 +3,13 @@ import ButtonInput from "./Button";
 
 interface IDashboard {
   start: () => void;
-  stop: () => void;
   reset: () => void;
 }
 
-const Dashboard: React.FC<IDashboard> = ({ start, stop, reset }) => {
+const Dashboard: React.FC<IDashboard> = ({ start, reset }) => {
   return (
     <div id="Dashboard">
       <ButtonInput onClick={start} label={"Start"} />
-      <ButtonInput onClick={stop} label={"Stop"} />
       <ButtonInput onClick={reset} label={"Reset"} />
     </div>
   );

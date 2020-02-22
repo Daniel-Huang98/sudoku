@@ -24,7 +24,7 @@ const NumberInput: React.FC<INumberInput> = props => {
       id={`${props.x} ${props.y}`}
       onChange={props.EnterBoard}
       readOnly={props.play}
-      value={props.input === 0 ? undefined : props.input}
+      value={props.input === 0 ? "" : props.input}
     />
   );
 };

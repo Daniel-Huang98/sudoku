@@ -3,17 +3,8 @@ import Board from "./components/Board";
 import "./css/App.css";
 import { clearBoard, selectBoard, boardArray } from "./Constants";
 
-import {
-  validInput,
-  guessNaive,
-  IGuess,
-  IState,
-  noZeros,
-  newBoard,
-  guessPrune
-} from "./helpers";
+import { validInput, IGuess, Icount, newBoard, guessPrune } from "./helpers";
 import Dashboard from "./components/Dashboard";
-import { findAllByDisplayValue } from "@testing-library/react";
 
 const App = () => {
   const [play, setPlay] = React.useState(false);
@@ -24,18 +15,15 @@ const App = () => {
   });
   const [invalid, setInvalid] = React.useState(false);
   const [done, setDone] = React.useState(false);
-
-  const update = (input: IState) => {
-    if (noZeros(input.board) && validInput(input.board)) {
-      setDone(true);
-      setPlay(false);
-    }
-
-    setInput(input);
-  };
+  const [count, setCount] = React.useState(0);
+  const [val, setVal] = React.useState(0);
 
   const reset = () => {
-    window.location.reload();
+    setInput({
+      board: newBoard(boardArray[val]),
+      guess: new Array<IGuess>(),
+      popped: false
+    });
   };
 
   const start = () => {
@@ -48,20 +36,19 @@ const App = () => {
     setDone(false);
   };
 
-  const stop = () => setPlay(false);
+  const loadBoard = (board: number[][], done: boolean, count: Icount) => {
+    setInput({ guess: [], popped: false, board });
+    setDone(done);
+    setPlay(false);
+    setCount(count.count);
+  };
+
+  const counter = { count: 0, state: [] };
 
   useEffect(() => {
     if (play) {
-      //setTimeout(() => {
-      //if (play && !done) {
-      //guessNaive(input, update);
-      // }
-      //}, 1);
       if (!done) {
-        guessPrune(input.board, (board: number[][], done: boolean) => {
-          setInput({ guess: [], popped: false, board });
-          setDone(done);
-        });
+        guessPrune(input.board, loadBoard, counter);
       }
     }
   });
@@ -76,12 +63,14 @@ const App = () => {
   };
 
   const LoadBoard = (event: any) => {
-    const val = event.target.value;
+    const ind = event.target.value;
+
     setInput({
-      board: newBoard(boardArray[val]),
+      board: newBoard(boardArray[ind]),
       guess: new Array<IGuess>(),
       popped: false
     });
+    setVal(ind);
   };
 
   const boards = selectBoard.map(val => (
@@ -91,7 +80,7 @@ const App = () => {
   return (
     <div className="App">
       <header>
-        <h1>Sudoku Solver Visualiser</h1>
+        <h1>Sudoku Solver</h1>
         <h2>
           {invalid
             ? "Invalid Input"
@@ -103,11 +92,12 @@ const App = () => {
         </h2>
       </header>
       <div className="body">
+        <h2>{count}</h2>
         <Board EnterBoard={EnterBoard} play={play} board={input.board} />
         <select disabled={play} onChange={LoadBoard}>
           {boards}
         </select>
-        <Dashboard start={start} stop={stop} reset={reset} />
+        <Dashboard start={start} reset={reset} />
       </div>
       <footer>
         <h2>Made by Daniel Huang</h2>
