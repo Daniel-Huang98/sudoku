@@ -1,22 +1,24 @@
 import React, { useEffect } from "react";
 import Board from "./components/Board";
 import "./css/App.css";
-import { clearBoard } from "./Constants";
+import { clearBoard, selectBoard, boardArray } from "./Constants";
 
 import {
   validInput,
-  guess,
+  guessNaive,
   IGuess,
   IState,
   noZeros,
-  newBoard
+  newBoard,
+  guessPrune
 } from "./helpers";
 import Dashboard from "./components/Dashboard";
+import { findAllByDisplayValue } from "@testing-library/react";
 
 const App = () => {
   const [play, setPlay] = React.useState(false);
   const [input, setInput] = React.useState({
-    board: newBoard(clearBoard),
+    board: clearBoard,
     guess: new Array<IGuess>(),
     popped: false
   });
@@ -49,11 +51,19 @@ const App = () => {
   const stop = () => setPlay(false);
 
   useEffect(() => {
-    setTimeout(() => {
-      if (play && !done) {
-        guess(input, update);
+    if (play) {
+      //setTimeout(() => {
+      //if (play && !done) {
+      //guessNaive(input, update);
+      // }
+      //}, 1);
+      if (!done) {
+        guessPrune(input.board, (board: number[][], done: boolean) => {
+          setInput({ guess: [], popped: false, board });
+          setDone(done);
+        });
       }
-    }, 1);
+    }
   });
 
   const EnterBoard = (event: any) => {
@@ -64,6 +74,19 @@ const App = () => {
     );
     setInput({ board: inputCopy, guess: input.guess, popped: false });
   };
+
+  const LoadBoard = (event: any) => {
+    const val = event.target.value;
+    setInput({
+      board: newBoard(boardArray[val]),
+      guess: new Array<IGuess>(),
+      popped: false
+    });
+  };
+
+  const boards = selectBoard.map(val => (
+    <option value={val.board}>{val.label}</option>
+  ));
 
   return (
     <div className="App">
@@ -81,6 +104,9 @@ const App = () => {
       </header>
       <div className="body">
         <Board EnterBoard={EnterBoard} play={play} board={input.board} />
+        <select disabled={play} onChange={LoadBoard}>
+          {boards}
+        </select>
         <Dashboard start={start} stop={stop} reset={reset} />
       </div>
       <footer>

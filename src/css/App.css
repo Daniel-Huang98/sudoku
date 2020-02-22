@@ -43,3 +43,9 @@ footer {
   align-items: center;
   min-height: 80vh;
 }
+
+select {
+  border-style: solid;
+  border-color: black;
+  width: 200px;
+}

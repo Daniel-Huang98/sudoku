@@ -96,7 +96,7 @@ export interface IState {
   popped: boolean;
 }
 
-export const guess = (input: IState, update: (input: IState) => void) => {
+export const guessNaive = (input: IState, update: (input: IState) => void) => {
   var guess = [...input.guess];
   var board = input.board;
   var popped = input.popped;
@@ -144,43 +144,95 @@ export const guess = (input: IState, update: (input: IState) => void) => {
   return;
 };
 
-export const mergeBoard = (
-  guess: Array<IGuess>,
-  board: Array<Array<number>>
-): Array<Array<number>> => {
-  var newBoard = [];
+export const guessPrune = (
+  board: number[][],
+  update: (board: number[][], done: boolean) => void
+): boolean => {
+  const tempBoard = newBoard(board);
+  //for each board calculate the array of options for each hole
+  //choose the option with the least options
+  const guess = calcOptions(tempBoard);
+  if (guess === null) {
+    console.log(tempBoard);
+    update(tempBoard, true);
+    return true;
+  }
+  for (var x = 0; x < guess.options.length; x++) {
+    tempBoard[guess.y][guess.x] = guess.options[x];
+    if (validInput(tempBoard)) {
+      if (guessPrune(tempBoard, update)) {
+        return true;
+      }
+    }
+  }
+  return false;
+};
 
-  for (var i = 0; i < board.length; i++) {
-    newBoard.push([...board[i]]);
+interface coord {
+  x: number;
+  y: number;
+  options: number[];
+}
+
+const calcOptions = (board: number[][]): coord | null => {
+  const holes: Array<coord> = [];
+  var leastOption = null;
+  for (var y = 0; y < 9; y++) {
+    for (var x = 0; x < 9; x++) {
+      if (board[y][x] === 0) {
+        const curr = getOptions(board, x, y);
+        holes.push({
+          x,
+          y,
+          options: curr
+        });
+        if (leastOption) {
+          const len: number = leastOption.options.length;
+          leastOption =
+            len < curr.length
+              ? leastOption
+              : {
+                  x,
+                  y,
+                  options: curr
+                };
+        } else {
+          leastOption = {
+            x,
+            y,
+            options: curr
+          };
+        }
+      }
+    }
+  }
+  //return holes;
+  return leastOption;
+};
+
+const getOptions = (board: number[][], x: number, y: number): number[] => {
+  var options: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  for (var col: number = 0; col < 9; col++) {
+    const value = board[y][col];
+    options = options.filter(ele => {
+      return ele !== value;
+    });
   }
 
-  if (guess.length === 0) {
-    return newBoard;
+  for (var row: number = 0; row < 9; row++) {
+    const value = board[row][x];
+    options = options.filter(ele => {
+      return ele !== value;
+    });
   }
-
-  for (var itr = 0; itr < guess.length; itr++) {
-    const val = guess[itr];
-    newBoard[val.y][val.x] = val.value;
-  }
-
-  return newBoard;
+  return options;
 };
 
 export const newBoard = (board: number[][]): number[][] => {
-  var newBoard = [];
+  const newBoard = [];
 
   for (var i = 0; i < board.length; i++) {
     newBoard.push([...board[i]]);
   }
-  return [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0]
-  ];
+  return newBoard;
 };

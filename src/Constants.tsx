@@ -1,4 +1,4 @@
-export const clearBoard2 = [
+export const clearBoard = [
   [0, 0, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -15,7 +15,7 @@ export const clearBoard3 = [
   [7, 0, 0, 1, 0, 0, 0, 4, 0],
   [3, 0, 0, 0, 0, 0, 2, 0, 0],
   [0, 0, 1, 3, 9, 0, 0, 0, 8],
-  [3, 0, 0, 7, 8, 6, 0, 0, 4],
+  [0, 0, 0, 7, 8, 6, 0, 0, 4],
   [8, 0, 0, 0, 4, 1, 7, 0, 0],
   [0, 0, 8, 0, 0, 0, 0, 0, 9],
   [0, 5, 0, 0, 0, 3, 0, 0, 1],
@@ -34,7 +34,7 @@ export const clearBoard1 = [
   [0, 0, 6, 0, 0, 0, 0, 0, 0]
 ];
 
-export const clearBoard = [
+export const clearBoard2 = [
   [0, 0, 0, 0, 0, 0, 0, 0, 8],
   [9, 7, 8, 0, 4, 0, 1, 3, 0],
   [0, 2, 0, 0, 0, 0, 6, 4, 0],
@@ -45,6 +45,15 @@ export const clearBoard = [
   [0, 1, 2, 0, 5, 0, 3, 6, 9],
   [8, 0, 0, 0, 0, 0, 0, 0, 0]
 ];
+
+export const selectBoard = [
+  { board: 0, label: "empty" },
+  { board: 1, label: "Example 1" },
+  { board: 2, label: "Example 2" },
+  { board: 3, label: "Example 3" }
+];
+
+export const boardArray = [clearBoard, clearBoard1, clearBoard2, clearBoard3];
 
 const oneSet = {
   1: false,
